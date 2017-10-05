@@ -1,7 +1,8 @@
 shared_examples_for 'InvalidUser' do
-  it 'returns status 422' do
+
+  it "returns status of error" do
     request
-    expect(response.status).to eq 422
+    expect(response.status).to eq status
   end
 
   it "doesn't change User count" do

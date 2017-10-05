@@ -32,29 +32,105 @@ describe 'Issues API' do
     end
 
     context 'missing email' do
-      let(:params) {{registration: {email: '', password: '12345678', password_confirmation: '12345678'}}}
+      let(:params) do
+        {registration: {email: '', password: '12345678', password_confirmation: '12345678'}}
+      end
       let(:request) {post '/api/registrations', params: params, headers: {}, xhr: true}
 
       it_behaves_like 'InvalidUser' do
         let(:message) {"Email can't be blank"}
+        let(:status) {422}
       end
     end
 
     context 'missing password' do
-      let(:params) {{registration: {email: 'test@studytube.nl', password: '', password_confirmation: '12345678'}}}
+      let(:params) do
+        {registration: {email: 'test@studytube.nl', password: '', password_confirmation: '12345678'}}
+      end
       let(:request) {post '/api/registrations', params: params, headers: {}, xhr: true}
 
       it_behaves_like 'InvalidUser' do
         let(:message) {"Password can't be blank, Password confirmation doesn't match Password"}
+        let(:status) {422}
       end
     end
 
     context 'wrong password confirmation' do
-      let(:params) {{registration: {email: 'test@studytube.nl', password: '12345678', password_confirmation: ''}}}
+      let(:params) do
+        {registration: {email: 'test@studytube.nl', password: '12345678', password_confirmation: ''}}
+      end
       let(:request) {post '/api/registrations', params: params, headers: {}, xhr: true}
 
       it_behaves_like 'InvalidUser' do
         let(:message) {"Password confirmation doesn't match Password"}
+        let(:status) {422}
+      end
+    end
+  end
+
+  describe 'DELETE :destroy' do
+    let!(:user) {create(:user)}
+
+    context 'authenticated' do
+      let(:headers) do
+        {
+            'X-User-Token' => user.authentication_token,
+            'X-User-Email' => user.email,
+            "HTTP_ACCEPT" => "application/json"
+        }
+      end
+
+      let(:request) {delete '/api/registrations', params: {}, headers: headers, xhr: true}
+
+      it 'returns status :ok' do
+        request
+        expect(response).to be_success
+      end
+
+      it 'records a new user into database' do
+        expect {request}.to change(User, :count).by(-1)
+      end
+
+      it 'returns empty response' do
+        request
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'unauthenticated' do
+      context 'wrong email' do
+        let(:headers) do
+          {
+              'X-User-Token' => user.authentication_token,
+              'X-User-Email' => 'user@wrong.email',
+              "HTTP_ACCEPT" => "application/json"
+          }
+        end
+
+        let(:request) {delete '/api/registrations', params: {}, headers: headers, xhr: true}
+
+        it_behaves_like 'InvalidUser' do
+          let(:message) {""}
+          let(:status) {401}
+        end
+
+      end
+
+      context 'wrong email' do
+        let(:headers) do
+          {
+              'X-User-Token' => 'wrong-token',
+              'X-User-Email' => user.email,
+              "HTTP_ACCEPT" => "application/json"
+          }
+        end
+
+        let(:request) {delete '/api/registrations', params: {}, headers: headers, xhr: true}
+
+        it_behaves_like 'InvalidUser' do
+          let(:message) {""}
+          let(:status) {401}
+        end
       end
     end
   end

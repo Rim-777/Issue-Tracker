@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       cache as: 'v1' do
         resource :registrations, only: [:create, :destroy]
         resource :sessions, only: [:create, :destroy]
+        resources :issues, except: [:new, :edit]
       end
     end
   end

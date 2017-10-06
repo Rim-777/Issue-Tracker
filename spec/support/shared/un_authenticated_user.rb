@@ -1,5 +1,4 @@
 shared_examples_for 'UnAuthenticatedUser' do
-  let(:request) {post '/api/sessions', params: params, headers: {}, xhr: true}
 
   it 'returns error status' do
     request

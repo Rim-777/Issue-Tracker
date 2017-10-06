@@ -13,6 +13,9 @@ gem 'simple_token_authentication', '~> 1.15', '>= 1.15.1'
 gem 'api-versions', '~> 1.2', '>= 1.2.1'
 gem 'responders', '~> 2.3'
 gem 'active_model_serializers', '~> 0.10.2'
+gem 'rolify', '~> 5.1'
+gem 'state_machines-activerecord'
+gem 'pundit', '~> 1.1'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

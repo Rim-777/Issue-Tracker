@@ -27,12 +27,14 @@ describe 'Issues API' do
     context 'invalid params' do
       context 'wrong email' do
         let(:params) {{email: 'wrong@email.com', password: '12345678'}}
+        let(:request) {post '/api/sessions', params: params, headers: {}, xhr: true}
         it_behaves_like 'UnAuthenticatedUser'
       end
 
       context 'invalid params' do
         context 'wrong email' do
           let(:params) {{email: user.email, password: 'wrong-password'}}
+          let(:request) {post '/api/sessions', params: params, headers: {}, xhr: true}
           it_behaves_like 'UnAuthenticatedUser'
         end
       end

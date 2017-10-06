@@ -1,0 +1,6 @@
+{
+  "type": "array",
+  "items": {
+    "$ref": "un_assigned_issue.json"
+  }
+}

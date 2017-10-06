@@ -19,11 +19,7 @@ class IssuePolicy < ApplicationPolicy
 
   def assign?
     return false unless user.has_role?(:manager)
-    record.assignee == record.user || record.assignee.nil?
-  end
-
-  def unassign?
-    user.has_role?(:manager)
+    record.assignee.nil? || record.assignee == record.user
   end
 
   def set_state?

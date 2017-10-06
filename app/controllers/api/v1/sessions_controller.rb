@@ -1,7 +1,6 @@
 module Api::V1
   class SessionsController < BaseController
     before_action :authenticate_user! , only: :destroy
-
     before_action :set_user, only: :create
 
     def create

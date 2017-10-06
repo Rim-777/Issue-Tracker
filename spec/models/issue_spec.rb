@@ -1,6 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe Issue, type: :model do
+  it {should validate_presence_of(:title)}
+  it {should validate_presence_of(:description)}
+  it {should validate_presence_of(:state)}
+  it {should validate_uniqueness_of(:title)}
+  it {should belong_to(:user)}
+  it {should belong_to(:assignee).class_name('User').with_foreign_key('assignee_id')}
+
+  context 'if in_progress?' do
+    before {allow(subject).to receive(:in_progress?).and_return(true)}
+    it {should validate_presence_of(:assignee_id)}
+  end
+
+  context 'if resolved?' do
+    before {allow(subject).to receive(:resolved?).and_return(true)}
+    it {should validate_presence_of(:assignee_id)}
+  end
+
   let!(:user) {create(:user)}
 
   describe '#assign' do
@@ -11,7 +28,7 @@ RSpec.describe Issue, type: :model do
         expect(issue.assign(user)).to eq true
       end
 
-      it 'assigns the user to the issue' do
+      it 'assigns the user to the issue as assignee' do
         issue.assign(user)
         expect(issue.assignee).to eq user
       end
@@ -28,7 +45,7 @@ RSpec.describe Issue, type: :model do
         expect(issue.assign(user)).to eq true
       end
 
-      it 'unassigns the user erom the issue' do
+      it 'unassigns the assignee from the issue' do
         issue.assign(user)
         expect(issue.assignee).to be_nil
       end
@@ -72,7 +89,7 @@ RSpec.describe Issue, type: :model do
       end
     end
 
-    context 'unknown ivent name' do
+    context 'unknown event name' do
       it 'raise error' do
         expect {pending_issue.trigger_event('hack')}.to raise_error(NameError, 'hack')
       end

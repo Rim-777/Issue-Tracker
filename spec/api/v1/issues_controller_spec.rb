@@ -34,7 +34,7 @@ describe 'Issues API' do
           end
         end
 
-        it 'returns json according schema' do
+        it 'returns json according to the schema' do
           request
           expect(response).to match_response_schema('un_assigned_issues')
         end
@@ -67,7 +67,7 @@ describe 'Issues API' do
           end
         end
 
-        it 'returns json according schema' do
+        it 'returns json according to the schema' do
           request
           expect(response).to match_response_schema('assigned_issues')
         end
@@ -123,7 +123,7 @@ describe 'Issues API' do
         expect {request}.to change(Issue, :count).by(1)
       end
 
-      it 'records a new issue into database related with user' do
+      it 'records a new issue into database related to the user' do
         expect {request}.to change(user.issues, :count).by(1)
       end
 
@@ -132,7 +132,7 @@ describe 'Issues API' do
         params[:issue].each {|k, v| expect(response.body).to be_json_eql(v.to_json).at_path(k.to_s)}
       end
 
-      it 'returns json according schema' do
+      it 'returns json according to the schema' do
         request
         expect(response).to match_response_schema('un_assigned_issue')
       end
@@ -195,7 +195,7 @@ describe 'Issues API' do
         expect(response.body).to be_json_eql(issue.to_json).at_path('/')
       end
 
-      it 'returns json according schema' do
+      it 'returns json according to the schema' do
         request
         expect(response.body).to match_response_schema('un_assigned_issue')
       end
@@ -256,7 +256,7 @@ describe 'Issues API' do
         params[:issue].each {|k, v| expect(response.body).to be_json_eql(v.to_json).at_path(k.to_s)}
       end
 
-      it 'returns json according schema' do
+      it 'returns json according to the schema' do
         request
         expect(response.body).to match_response_schema('un_assigned_issue')
       end
@@ -322,7 +322,7 @@ describe 'Issues API' do
       it 'remove an issue from the database' do
         expect {request}.to change(Issue, :count).by(-1)
       end
-      it 'remove an issue from the database related user' do
+      it 'remove an issue from the database related to the user' do
         expect {request}.to change(user.issues, :count).by(-1)
       end
 
@@ -393,7 +393,7 @@ describe 'Issues API' do
           expect(response.body).to be_json_eql(issue.to_json).at_path('/')
         end
 
-        it 'returns json according schema' do
+        it 'returns json according to the schema' do
           request
           issue.reload
           expect(response.body).to match_response_schema('assigned_issue')
@@ -414,7 +414,7 @@ describe 'Issues API' do
           expect(response.body).to be_json_eql(issue.to_json).at_path('/')
         end
 
-        it 'returns json according schema' do
+        it 'returns json according to the schema' do
           request
           expect(response.body).to match_response_schema('un_assigned_issue')
         end
@@ -488,7 +488,7 @@ describe 'Issues API' do
           expect(response.body).to be_json_eql(issue.to_json).at_path('/')
         end
 
-        it 'returns json according schema' do
+        it 'returns json according to the schema' do
           request
           expect(response.body).to match_response_schema('assigned_issue')
         end

@@ -10,7 +10,8 @@ class Issue < ApplicationRecord
              optional: true
 
   def trigger_event(name)
-    raise NameError, name, I18n.t('validations.forbidden_event') if state_paths.events.exclude?(name.to_sym)
+    message = I18n.t('validations.forbidden_event')
+    raise NameError, name, message if state_paths.events.exclude?(name.to_sym)
     send(name.to_sym)
   end
 

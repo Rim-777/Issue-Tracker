@@ -35,6 +35,26 @@ module Api::V1
       head :ok
     end
 
+    def assign
+      authorize @issue
+      if @issue.assign(current_user)
+        render json: @issue, serializer: IssueSerializer
+      else
+        render json: @issue.errors.full_messages, status: 422
+      end
+    end
+
+    def set_state
+      authorize @issue
+      if @issue.trigger_event(params[:state_event])
+        render json: @issue, serializer: IssueSerializer
+      else
+        render json: @issue.errors.full_messages, status: 422
+      end
+    rescue NameError => e
+      render json: {error: e.message}, status: 422
+    end
+
     private
     def issue_params
       params.require(:issue).permit(:title, :description)

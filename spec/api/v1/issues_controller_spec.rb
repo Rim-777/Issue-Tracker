@@ -30,7 +30,7 @@ describe 'Issues API' do
         it 'returns an array of issues' do
           request
           regular_user_issue_list.each do |issue|
-            expect(response.body).to include_json(issue.to_json).excluding('assignee_id').at_path('/')
+            expect(response.body).to include_json(issue.to_json).at_path('/')
           end
         end
 
@@ -43,7 +43,7 @@ describe 'Issues API' do
       context 'manager' do
         let(:manager) {create(:user)}
         let!(:regular_user_issue_list) {create_list(:issue, 2, user: user, assignee: manager)}
-        let!(:manager_issue_list) {create_list(:issue, 2, user: manager, assignee: manager)}
+        let!(:manager_issue_list) {create_list(:issue, 2, user: manager, assignee: user)}
 
         let(:headers) do
           {
@@ -190,13 +190,9 @@ describe 'Issues API' do
         expect(response).to be_success
       end
 
-      it "doesn't change an issues count" do
-        expect {request}.to_not change(Issue, :count)
-      end
-
-      it 'returns an array of issues' do
+      it 'returns an issue as json' do
         request
-        expect(response.body).to be_json_eql(issue.to_json).excluding('assignee_id').at_path('/')
+        expect(response.body).to be_json_eql(issue.to_json).at_path('/')
       end
 
       it 'returns json according schema' do
@@ -233,7 +229,7 @@ describe 'Issues API' do
   end
 
   describe 'PATCH :update' do
-    let!(:issue) {create(:issue, user: user, title: 'The old Issue Title', description: 'The old Issue Description' )}
+    let!(:issue) {create(:issue, user: user, title: 'The old Issue Title', description: 'The old Issue Description')}
     let(:params) {{issue: {title: 'The New Issue Title', description: 'The New Issue Description'}}}
     let(:request) {patch "/api/issues/#{issue.id}", params: params, headers: headers, xhr: true}
 
@@ -366,6 +362,175 @@ describe 'Issues API' do
 
         it "doesn't change an issues count" do
           expect {request}.to_not change(Issue, :count)
+        end
+      end
+    end
+  end
+
+  describe 'PATCH :assign' do
+    let(:request) {patch "/api/issues/#{issue.id}/assign", params: {}, headers: headers, xhr: true}
+    before {user.add_role :manager}
+    context 'authenticated' do
+      let(:headers) do
+        {
+            'X-User-Token' => user.authentication_token,
+            'X-User-Email' => user.email,
+            "HTTP_ACCEPT" => "application/json"
+        }
+      end
+
+      context 'the issue is not assigned' do
+        let!(:issue) {create(:issue, user: user)}
+
+        it 'returns status :ok' do
+          request
+          expect(response).to be_success
+        end
+
+        it 'returns an issue as json' do
+          request
+          issue.reload
+          expect(response.body).to be_json_eql(issue.to_json).at_path('/')
+        end
+
+        it 'returns json according schema' do
+          request
+          issue.reload
+          expect(response.body).to match_response_schema('assigned_issue')
+        end
+      end
+
+      context 'the issue is  assigned' do
+        let!(:issue) {create(:issue, user: user, assignee: user)}
+
+        it 'returns status :ok' do
+          request
+          expect(response).to be_success
+        end
+
+        it 'returns an issue as json' do
+          request
+          issue.reload
+          expect(response.body).to be_json_eql(issue.to_json).at_path('/')
+        end
+
+        it 'returns json according schema' do
+          request
+          expect(response.body).to match_response_schema('un_assigned_issue')
+        end
+      end
+    end
+
+    context 'unauthenticated' do
+      let!(:issue) {create(:issue, user: user)}
+      context 'wrong authentication_token' do
+        let(:headers) do
+          {
+              'X-User-Token' => 'wrong-token',
+              'X-User-Email' => user.email,
+              "HTTP_ACCEPT" => "application/json"
+          }
+        end
+
+        it_behaves_like 'UnAuthenticatedUser'
+
+        it "doesn't assign manager to issue" do
+          request
+          expect(issue.assignee).to be nil
+        end
+      end
+
+      context 'wrong email' do
+        let(:headers) do
+          {
+              'X-User-Token' => user.authentication_token,
+              'X-User-Email' => 'fake@email.com',
+              "HTTP_ACCEPT" => "application/json"
+          }
+        end
+
+        it_behaves_like 'UnAuthenticatedUser'
+
+        it "doesn't assign manager to issue" do
+          request
+          expect(issue.assignee).to be nil
+        end
+      end
+    end
+  end
+
+  describe 'PATCH :set_state' do
+    let!(:issue) {create(:issue, user: user, assignee: create(:user))}
+    let(:request) {patch "/api/issues/#{issue.id}/set_state", params: params, headers: headers, xhr: true}
+
+    before {user.add_role :manager}
+
+    context 'authenticated' do
+      let(:headers) do
+        {
+            'X-User-Token' => user.authentication_token,
+            'X-User-Email' => user.email,
+            "HTTP_ACCEPT" => "application/json"
+        }
+      end
+
+      %w(open_issue stop_issue return_issue close_issue).each do |event|
+        let(:params) {{state_event: event}}
+
+        it 'returns status :ok' do
+          request
+          expect(response).to be_success
+        end
+
+        it 'returns an issue as json' do
+          request
+          issue.reload
+          expect(response.body).to be_json_eql(issue.to_json).at_path('/')
+        end
+
+        it 'returns json according schema' do
+          request
+          expect(response.body).to match_response_schema('assigned_issue')
+        end
+      end
+    end
+
+    context 'unauthenticated' do
+      let(:params) {{state_event: 'open_issue'}}
+      let(:request) {patch "/api/issues/#{issue.id}/set_state", params: params, headers: headers, xhr: true}
+      context 'wrong authentication_token' do
+        let(:headers) do
+          {
+              'X-User-Token' => 'wrong-token',
+              'X-User-Email' => user.email,
+              "HTTP_ACCEPT" => "application/json"
+          }
+        end
+
+        it_behaves_like 'UnAuthenticatedUser'
+
+        it "doesn't change the state of the issue" do
+          request
+          issue.reload
+          expect(issue.pending?).to be true
+        end
+      end
+
+      context 'wrong email' do
+        let(:headers) do
+          {
+              'X-User-Token' => user.authentication_token,
+              'X-User-Email' => 'fake@email.com',
+              "HTTP_ACCEPT" => "application/json"
+          }
+        end
+
+        it_behaves_like 'UnAuthenticatedUser'
+
+        it "doesn't change the state of the issue" do
+          request
+          issue.reload
+          expect(issue.pending?).to be true
         end
       end
     end

@@ -1,6 +1,7 @@
 module Api::V1
   class BaseController < ApplicationController
     acts_as_token_authentication_handler_for User, fallback: :none
+    rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     respond_to :json
 
     protected
@@ -8,6 +9,12 @@ module Api::V1
     def authenticate_user!
       return if current_user
       head :unauthorized
+    end
+
+    def user_not_authorized(exception)
+      policy_name = exception.policy.class.to_s.underscore
+      message = "#{policy_name}/#{exception.query}"
+      render json: {error: 'Action not allowed', error_description: message}, status: :unauthorized
     end
   end
 end

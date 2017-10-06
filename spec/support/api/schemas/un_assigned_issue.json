@@ -1,20 +1,14 @@
 {
   "type": "object",
-  "required": [
-    "id",
-    "user_id",
-    "title",
-    "description",
-    "created_at",
-    "updated_at",
-    "state"
-  ],
   "properties": {
     "id": {
       "type": "integer"
     },
     "user_id": {
       "type": "integer"
+    },
+    "assignee_id": {
+      "type": null
     },
     "title": {
       "type": "string"

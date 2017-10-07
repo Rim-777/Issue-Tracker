@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Issues API' do
+describe 'Issues API'  do
   let!(:user) {create(:user)}
 
   describe 'GET :index' do
@@ -9,18 +9,9 @@ describe 'Issues API' do
 
     context 'authenticated' do
       context 'regular user' do
-        let(:headers) do
-          {
-              'X-User-Token' => user.authentication_token,
-              'X-User-Email' => user.email,
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
+        let_valid_headers
 
-        it 'returns status :ok' do
-          request
-          expect(response).to be_success
-        end
+        it_behaves_like 'Success'
 
         it 'returns json with an array' do
           request
@@ -75,29 +66,7 @@ describe 'Issues API' do
     end
 
     context 'unauthenticated' do
-      context 'wrong authentication_token' do
-        let(:headers) do
-          {
-              'X-User-Token' => 'wrong-token',
-              'X-User-Email' => user.email,
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
-
-        it_behaves_like 'UnAuthenticatedUser'
-      end
-
-      context 'wrong email' do
-        let(:headers) do
-          {
-              'X-User-Token' => user.authentication_token,
-              'X-User-Email' => 'fake@email.com',
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
-
-        it_behaves_like 'UnAuthenticatedUser'
-      end
+      it_behaves_like 'UnAuthenticated'
     end
   end
 
@@ -106,18 +75,9 @@ describe 'Issues API' do
     let(:request) {post '/api/issues', params: params, headers: headers, xhr: true}
 
     context 'authenticated' do
-      let(:headers) do
-        {
-            'X-User-Token' => user.authentication_token,
-            'X-User-Email' => user.email,
-            "HTTP_ACCEPT" => "application/json"
-        }
-      end
+      let_valid_headers
 
-      it 'returns status :ok' do
-        request
-        expect(response).to be_success
-      end
+      it_behaves_like 'Success'
 
       it 'records a new issue into database' do
         expect {request}.to change(Issue, :count).by(1)
@@ -139,37 +99,7 @@ describe 'Issues API' do
     end
 
     context 'unauthenticated' do
-      context 'wrong authentication_token' do
-        let(:headers) do
-          {
-              'X-User-Token' => 'wrong-token',
-              'X-User-Email' => user.email,
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it "doesn't change an issues count" do
-          expect {request}.to_not change(Issue, :count)
-        end
-      end
-
-      context 'wrong email' do
-        let(:headers) do
-          {
-              'X-User-Token' => user.authentication_token,
-              'X-User-Email' => 'fake@email.com',
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it 'records a new issue into database' do
-          expect {request}.to_not change(Issue, :count)
-        end
-      end
+      it_behaves_like 'UnAuthenticatedAndUnChanged'
     end
   end
 
@@ -177,18 +107,9 @@ describe 'Issues API' do
     let!(:issue) {create(:issue, user: user)}
     let(:request) {get "/api/issues/#{issue.id}", params: {}, headers: headers, xhr: true}
     context 'authenticated' do
-      let(:headers) do
-        {
-            'X-User-Token' => user.authentication_token,
-            'X-User-Email' => user.email,
-            "HTTP_ACCEPT" => "application/json"
-        }
-      end
+      let_valid_headers
 
-      it 'returns status :ok' do
-        request
-        expect(response).to be_success
-      end
+      it_behaves_like 'Success'
 
       it 'returns an issue as json' do
         request
@@ -202,29 +123,7 @@ describe 'Issues API' do
     end
 
     context 'unauthenticated' do
-      context 'wrong authentication_token' do
-        let(:headers) do
-          {
-              'X-User-Token' => 'wrong-token',
-              'X-User-Email' => user.email,
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
-
-        it_behaves_like 'UnAuthenticatedUser'
-      end
-
-      context 'wrong email' do
-        let(:headers) do
-          {
-              'X-User-Token' => user.authentication_token,
-              'X-User-Email' => 'fake@email.com',
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
-
-        it_behaves_like 'UnAuthenticatedUser'
-      end
+      it_behaves_like 'UnAuthenticated'
     end
   end
 
@@ -234,18 +133,9 @@ describe 'Issues API' do
     let(:request) {patch "/api/issues/#{issue.id}", params: params, headers: headers, xhr: true}
 
     context 'authenticated' do
-      let(:headers) do
-        {
-            'X-User-Token' => user.authentication_token,
-            'X-User-Email' => user.email,
-            "HTTP_ACCEPT" => "application/json"
-        }
-      end
+      let_valid_headers
 
-      it 'returns status :ok' do
-        request
-        expect(response).to be_success
-      end
+      it_behaves_like 'Success'
 
       it "doesn't change an issues count" do
         expect {request}.to_not change(Issue, :count)
@@ -264,13 +154,7 @@ describe 'Issues API' do
 
     context 'unauthenticated' do
       context 'wrong authentication_token' do
-        let(:headers) do
-          {
-              'X-User-Token' => 'wrong-token',
-              'X-User-Email' => user.email,
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
+        let_wrong_token_headers
 
         it_behaves_like 'UnAuthenticatedUser'
 
@@ -282,13 +166,7 @@ describe 'Issues API' do
       end
 
       context 'wrong email' do
-        let(:headers) do
-          {
-              'X-User-Token' => user.authentication_token,
-              'X-User-Email' => 'fake@email.com',
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
+        let_wrong_email_headers
 
         it_behaves_like 'UnAuthenticatedUser'
 
@@ -306,18 +184,9 @@ describe 'Issues API' do
     let(:request) {delete "/api/issues/#{issue.id}", params: {}, headers: headers, xhr: true}
 
     context 'authenticated' do
-      let(:headers) do
-        {
-            'X-User-Token' => user.authentication_token,
-            'X-User-Email' => user.email,
-            "HTTP_ACCEPT" => "application/json"
-        }
-      end
+      let_valid_headers
 
-      it 'returns status :ok' do
-        request
-        expect(response).to be_success
-      end
+      it_behaves_like 'Success'
 
       it 'remove an issue from the database' do
         expect {request}.to change(Issue, :count).by(-1)
@@ -333,37 +202,7 @@ describe 'Issues API' do
     end
 
     context 'unauthenticated' do
-      context 'wrong authentication_token' do
-        let(:headers) do
-          {
-              'X-User-Token' => 'wrong-token',
-              'X-User-Email' => user.email,
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it "doesn't change an issues count" do
-          expect {request}.to_not change(Issue, :count)
-        end
-      end
-
-      context 'wrong email' do
-        let(:headers) do
-          {
-              'X-User-Token' => user.authentication_token,
-              'X-User-Email' => 'fake@email.com',
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it "doesn't change an issues count" do
-          expect {request}.to_not change(Issue, :count)
-        end
-      end
+      it_behaves_like 'UnAuthenticatedAndUnChanged'
     end
   end
 
@@ -371,21 +210,12 @@ describe 'Issues API' do
     let(:request) {patch "/api/issues/#{issue.id}/assign", params: {}, headers: headers, xhr: true}
     before {user.add_role :manager}
     context 'authenticated' do
-      let(:headers) do
-        {
-            'X-User-Token' => user.authentication_token,
-            'X-User-Email' => user.email,
-            "HTTP_ACCEPT" => "application/json"
-        }
-      end
+      let_valid_headers
 
       context 'the issue is not assigned' do
         let!(:issue) {create(:issue, user: user)}
 
-        it 'returns status :ok' do
-          request
-          expect(response).to be_success
-        end
+        it_behaves_like 'Success'
 
         it 'returns an issue as json' do
           request
@@ -400,13 +230,10 @@ describe 'Issues API' do
         end
       end
 
-      context 'the issue is  assigned' do
+      context 'the issue is assigned' do
         let!(:issue) {create(:issue, user: user, assignee: user)}
 
-        it 'returns status :ok' do
-          request
-          expect(response).to be_success
-        end
+        it_behaves_like 'Success'
 
         it 'returns an issue as json' do
           request
@@ -424,13 +251,7 @@ describe 'Issues API' do
     context 'unauthenticated' do
       let!(:issue) {create(:issue, user: user)}
       context 'wrong authentication_token' do
-        let(:headers) do
-          {
-              'X-User-Token' => 'wrong-token',
-              'X-User-Email' => user.email,
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
+        let_wrong_token_headers
 
         it_behaves_like 'UnAuthenticatedUser'
 
@@ -441,13 +262,7 @@ describe 'Issues API' do
       end
 
       context 'wrong email' do
-        let(:headers) do
-          {
-              'X-User-Token' => user.authentication_token,
-              'X-User-Email' => 'fake@email.com',
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
+        let_wrong_email_headers
 
         it_behaves_like 'UnAuthenticatedUser'
 
@@ -466,21 +281,12 @@ describe 'Issues API' do
     before {user.add_role :manager}
 
     context 'authenticated' do
-      let(:headers) do
-        {
-            'X-User-Token' => user.authentication_token,
-            'X-User-Email' => user.email,
-            "HTTP_ACCEPT" => "application/json"
-        }
-      end
+      let_valid_headers
 
       %w(open_issue stop_issue return_issue close_issue).each do |event|
         let(:params) {{state_event: event}}
 
-        it 'returns status :ok' do
-          request
-          expect(response).to be_success
-        end
+        it_behaves_like 'Success'
 
         it 'returns an issue as json' do
           request
@@ -499,13 +305,7 @@ describe 'Issues API' do
       let(:params) {{state_event: 'open_issue'}}
       let(:request) {patch "/api/issues/#{issue.id}/set_state", params: params, headers: headers, xhr: true}
       context 'wrong authentication_token' do
-        let(:headers) do
-          {
-              'X-User-Token' => 'wrong-token',
-              'X-User-Email' => user.email,
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
+        let_wrong_token_headers
 
         it_behaves_like 'UnAuthenticatedUser'
 
@@ -517,13 +317,7 @@ describe 'Issues API' do
       end
 
       context 'wrong email' do
-        let(:headers) do
-          {
-              'X-User-Token' => user.authentication_token,
-              'X-User-Email' => 'fake@email.com',
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
+        let_wrong_email_headers
 
         it_behaves_like 'UnAuthenticatedUser'
 

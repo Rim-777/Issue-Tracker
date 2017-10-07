@@ -72,13 +72,7 @@ describe 'Issues API' do
     let!(:user) {create(:user)}
 
     context 'authenticated' do
-      let(:headers) do
-        {
-            'X-User-Token' => user.authentication_token,
-            'X-User-Email' => user.email,
-            "HTTP_ACCEPT" => "application/json"
-        }
-      end
+      let_valid_headers
 
       let(:request) {delete '/api/registrations', params: {}, headers: headers, xhr: true}
 
@@ -99,13 +93,7 @@ describe 'Issues API' do
 
     context 'unauthenticated' do
       context 'wrong email' do
-        let(:headers) do
-          {
-              'X-User-Token' => user.authentication_token,
-              'X-User-Email' => 'user@wrong.email',
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
+        let_wrong_email_headers
 
         let(:request) {delete '/api/registrations', params: {}, headers: headers, xhr: true}
 
@@ -113,17 +101,10 @@ describe 'Issues API' do
           let(:message) {""}
           let(:status) {401}
         end
-
       end
 
-      context 'wrong email' do
-        let(:headers) do
-          {
-              'X-User-Token' => 'wrong-token',
-              'X-User-Email' => user.email,
-              "HTTP_ACCEPT" => "application/json"
-          }
-        end
+      context 'wrong token' do
+        let_wrong_token_headers
 
         let(:request) {delete '/api/registrations', params: {}, headers: headers, xhr: true}
 

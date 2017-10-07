@@ -1,3 +1,11 @@
 en:
   validations:
     forbidden_event: "- Event is invalid"
+  pundit:
+     default: 'You cannot perform this action.'
+     post_policy:
+       update?: 'You have to be a regular user to update issues!'
+       create?: 'You have to be a regular user to  create issues!'
+       destroy?: 'You have to be a regular user to destroy issues!'
+       assign?:  'You have to be a manager to assign issues and issue has to be unassigned!'
+       set_state?: 'You have to be a manager to manage states of issues!'

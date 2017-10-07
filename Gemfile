@@ -16,6 +16,8 @@ gem 'active_model_serializers', '~> 0.10.2'
 gem 'rolify', '~> 5.1'
 gem 'state_machines-activerecord'
 gem 'pundit', '~> 1.1'
+gem 'will_paginate'
+gem 'api-pagination'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

@@ -3,9 +3,11 @@ module Api::V1
     include Pundit
     before_action :authenticate_user!
     before_action :set_issue, except: [:index, :create]
+    rescue_from Tracker::InvalidEventError, with: :handle_invalid_event
 
     def index
-      @issues = current_user.has_role?(:manager) ? Issue.all : current_user.issues
+      collection = Issue.fetch_collection_by(user: current_user, state: params[:filter])
+      @issues = paginate collection, per_page: params[:per_page]
       respond_with :api, @issues
     end
 
@@ -51,8 +53,6 @@ module Api::V1
       else
         render json: @issue.errors.full_messages, status: 422
       end
-    rescue NameError => e
-      render json: {error: e.message}, status: 422
     end
 
     private
@@ -62,6 +62,10 @@ module Api::V1
 
     def set_issue
       @issue = Issue.find(params[:id])
+    end
+
+    def handle_invalid_event(e)
+      render json: {invalid_event_error: e.message}, status: 422
     end
   end
 end

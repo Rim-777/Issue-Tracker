@@ -9,9 +9,11 @@ class Issue < ApplicationRecord
              inverse_of: :assigned_issues,
              optional: true
 
+  default_scope {order(created_at: :desc )}
+
   def trigger_event(name)
-    message = I18n.t('validations.forbidden_event')
-    raise NameError, name, message if state_paths.events.exclude?(name.to_sym)
+    message = "#{name} #{I18n.t('validations.forbidden_event')}"
+    raise Tracker::InvalidEventError, message if state_paths.events.exclude?(name.to_sym)
     send(name.to_sym)
   end
 
@@ -19,7 +21,15 @@ class Issue < ApplicationRecord
     update(assignee: self.assignee.present? ? nil : assignee)
   end
 
-  private
+  def self.fetch_collection_by(**options)
+    state = options[:state]
+    user = options[:user]
+    if state
+      user.has_role?(:manager) ? Issue.where(state: state) : Issue.where(state: state, user: user)
+    else
+      user.has_role?(:manager) ? Issue.all : Issue.where(user: user)
+    end
+  end
 
   state_machine :initial => :pending do
     event :open_issue do

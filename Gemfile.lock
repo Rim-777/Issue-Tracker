@@ -45,6 +45,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    api-pagination (4.6.3)
     api-versions (1.2.1)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
@@ -196,12 +197,14 @@ GEM
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
+    will_paginate (3.1.6)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   active_model_serializers (~> 0.10.2)
+  api-pagination
   api-versions (~> 1.2, >= 1.2.1)
   byebug
   devise
@@ -222,6 +225,7 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   state_machines-activerecord
   tzinfo-data
+  will_paginate
 
 BUNDLED WITH
    1.16.0.pre.2

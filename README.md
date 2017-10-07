@@ -1,11 +1,13 @@
 # README
 
 API for Simple tracker:
+* Before running of the application please make sure you have all dependencies installed. 
+Run the commands: bundle install, to get them.
+* Also you need to run rails db:migrate  and rails db:migrate RAILS_ENV=test to migrate entities to your database.
 * Command to run this app: rails s - It runs the application on the local server at development mode
 * Locally application is available on localhost:3000
-* Before running of the application please make sure you have all dependencies installed. Run the commands:
-bundle install, to get it.
-* Also you need to run rails db:migrate  and rails db:migrate RAILS_ENV=test to migrate entities to your database.
+
+
 * For user registration use:  POST '/api/registrations'.  
 Params: 'email', 'password', 'password_confirmation'. 
 * For removing of an account use: DELETE '/api/registrations'.
@@ -52,7 +54,6 @@ You can not unassign  an issue with one of these states as well).
 
 
 For both above requests you need to have the manager access.
-
 
 End point to Show an issue: GET '/api/issues/:id'
 you'll get an issue as json. 

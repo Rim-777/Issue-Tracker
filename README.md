@@ -62,7 +62,7 @@ _(a manager can see all issues, a regular user can see issues created by themsel
 
 Both a manager and a regular user can filter issues by state passing state as params.
 For it use the params key - `filter`. Allowed values for the filtering are: `pending`, `in_progress`, `resolved`. 
-__
+
 
 You can paginate response as well. For the pagination you need to pass following params keys:
 `page` - the page sequence number, `per_page` -  the number of objects to show.

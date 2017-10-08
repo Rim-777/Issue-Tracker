@@ -7,14 +7,14 @@ Run the command: `bundle install`, to get them.
 * The command to run this app is: `rails s` - It runs the application on the local server at development mode
 * Locally application is available on `localhost:3000`
 
-####Authentication requests:
+Authentication requests:
 
 * For user registration use:  `POST '/api/registrations'` with params keys: `email`, `password`, `password_confirmation`. 
 * To remove your account use: `DELETE '/api/registrations'` with params keys: `email`, `authentication_token`
 * For a `Sign In` request use: `POST '/api/sessions'` with params keys: params: `email`, `password`.
 * For a `Sign Out` request use: `DELETE '/api/sessions'` with params keys: `email`, `authentication_token`.
 
-#####For the authentication it uses 2 ruby gems:
+For the authentication it uses 2 ruby gems:
 * `Devise` for the storage and the manipulation of user's data such as: (`email, password, confirmation` etc).
 * `Simple Token Authentication`(generation and storage of `authentication_tokens` for users).
 

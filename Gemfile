@@ -18,10 +18,7 @@ gem 'state_machines-activerecord'
 gem 'pundit', '~> 1.1'
 gem 'will_paginate'
 gem 'api-pagination'
-
-group :development, :test do
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-end
+gem 'apipie-rails'
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
@@ -34,7 +31,6 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
-
 
 group :test do
   gem 'shoulda-matchers'

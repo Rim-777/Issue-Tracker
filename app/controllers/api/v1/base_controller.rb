@@ -5,6 +5,12 @@ module Api::V1
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
     respond_to :json
 
+    def_param_group :headers do
+      header 'X-User-Token', 'Authentication token', required: true
+      header 'X-User-Email', 'User email', required: true
+      error code: 401, desc: :unauthorized
+    end
+
     protected
     def authenticate_user!
       return if current_user

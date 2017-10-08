@@ -1,15 +1,16 @@
 # README
 
-API for Simple tracker:
-* Before running of the application please make sure you have all dependencies installed. 
+API for the Simple Tracker:
+* Before the running of the application please make sure you have all dependencies installed. 
 Run the command: `bundle install`, to get them.
-* Also you need to run `rails db:migrate`  and `rails db:migrate RAILS_ENV=test` to migrate entities to your database.
-* The command to run this app is: `rails s` - It runs the application on the local server at development mode
+* To create the database run `rails db:create`
+* Run `rails db:migrate`  and `rails db:migrate RAILS_ENV=test` to migrate entities to your database.
+* To run this app use the command: `rails s` - It runs the application on the local server at development mode
 * Locally application is available on `localhost:3000`
 
 Authentication requests:
 
-* For user registration use:  `POST '/api/registrations'` with params keys: `email`, `password`, `password_confirmation`. 
+* For the user registration use:  `POST '/api/registrations'` with params keys: `email`, `password`, `password_confirmation`. 
 * To remove your account use: `DELETE '/api/registrations'` with params keys: `email`, `authentication_token`
 * For a `Sign In` request use: `POST '/api/sessions'` with params keys: params: `email`, `password`.
 * For a `Sign Out` request use: `DELETE '/api/sessions'` with params keys: `email`, `authentication_token`.
@@ -46,8 +47,7 @@ End points to assign an issue to yourself and change issue states:
 Allowed state events are: `open_issue` - sets the state  as `in_progress`, `close_issue` - sets the state  as `resolved`, `stop_issue` - sets the state  as `pending`.
  By default any issue has the state `pending` 
 (***Note:*** _you can't set states `in_progress` and `close_issue` if the issue doesn't have assignee. 
-You can not unassign  an issue with one of these states as well)_.
-
+You can't unassign an issue with one of these states as well)_.
 
 ***NOTE:*** _For both above requests you need to have the manager access._
 
@@ -64,7 +64,7 @@ Both a manager and a regular user can filter issues by state passing state as pa
 For it use the params key - `filter`. Allowed values for the filtering are: `pending`, `in_progress`, `resolved`. 
 
 
-You can paginate response as well. For the pagination you need to pass following params keys:
+You can paginate this response as well. For the pagination you need to pass following params keys:
 `page` - the page sequence number, `per_page` -  the number of objects to show.
 
 Requirments:

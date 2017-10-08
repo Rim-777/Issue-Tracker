@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  apipie
   devise_for :users, skip: [:sessions, :passwords, :registrations]
   api vendor_string: "issue_tracker", default_version: 1 do
     version 1 do

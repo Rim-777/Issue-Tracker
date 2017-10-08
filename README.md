@@ -1,10 +1,11 @@
 # README
 
-API for Simple tracker:
-* Before running of the application please make sure you have all dependencies installed. 
+API for the Simple Tracker:
+* Before the running of the application please make sure you have all dependencies installed. 
 Run the command: `bundle install`, to get them.
-* Also you need to run `rails db:migrate`  and `rails db:migrate RAILS_ENV=test` to migrate entities to your database.
-* The command to run this app is: `rails s` - It runs the application on the local server at development mode
+* To create the database run `rails db:create`
+* Run `rails db:migrate`  and `rails db:migrate RAILS_ENV=test` to migrate entities to your database.
+* To run this app use the command: `rails s` - It runs the application on the local server at development mode
 * Locally application is available on `localhost:3000`
 
 Authentication requests:

@@ -58,7 +58,8 @@ _(This request is available for any registered user)._
 
 The end point to get a list of issues is: 
 `GET '/api/issues'`
-_(a manager can see all issues, a regular user can see issues created by themselves)_
+_(a manager can see all issues, a regular user can see issues created by themselves)._
+
 Both a manager and a regular user can filter issues by state passing state as params.
 For it use the params key - `filter`. Allowed values for the filtering are: `pending`, `in_progress`, `resolved`. 
 __

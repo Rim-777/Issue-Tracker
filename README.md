@@ -1,4 +1,6 @@
-##API for Simple tracker:
+
+
+API for Simple tracker:
 * Before running of the application please make sure you have all dependencies installed. 
 Run the command: `bundle install`, to get them.
 * Also you need to run `rails db:migrate`  and `rails db:migrate RAILS_ENV=test` to migrate entities to your database.

@@ -1,4 +1,4 @@
-
+# README
 
 API for Simple tracker:
 * Before running of the application please make sure you have all dependencies installed. 
@@ -30,7 +30,7 @@ you should make a `'Sign In'` request with `email` and `password` in params.
 In the response body you'll get the same 'email' and a  new `authentication_token`.
 Please include these  `authentication_token` and `email` to the headers of next requests.   
 
-####To Create, Update or Delete an issue use following requests:
+#### To Create, Update or Delete an issue use following requests:
 * `POST '/api/issues'` with following params keys `title`, `description`('title', 'description' are required).
 * `PATCH '/api/issues/:id'` ('title', 'description' are required).
 * `DELETE '/api/issues/:id'`

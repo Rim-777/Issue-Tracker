@@ -18,7 +18,7 @@ For the authentication it uses 2 ruby gems:
 * `Devise` for the storage and the manipulation of user's data such as: (`email, password, confirmation` etc).
 * `Simple Token Authentication`(generation and storage of `authentication_tokens` for users).
 
-######How it works:
+###### How it works:
 * Immediately after registration, these libraries  generate and storage authentication token. 
 If the the request is successful  you'll get the user email and an authentication token in the response body. 
 Please include these  authentication token and email to headers of next requests.
@@ -30,7 +30,7 @@ you should make a `'Sign In'` request with `email` and `password` in params.
 In the response body you'll get the same 'email' and a  new `authentication_token`.
 Please include these  `authentication_token` and `email` to the headers of next requests.   
 
-#### To Create, Update or Delete an issue use following requests:
+To Create, Update or Delete an issue use following requests:
 * `POST '/api/issues'` with following params keys `title`, `description`('title', 'description' are required).
 * `PATCH '/api/issues/:id'` ('title', 'description' are required).
 * `DELETE '/api/issues/:id'`
@@ -39,7 +39,7 @@ The POST and PATCH above requests returns issue as json.
 
 ***NOTE:*** _For the above requests you need the regular registration only._
 
-####End points to assign an issue to yourself and change issue states:
+End points to assign an issue to yourself and change issue states:
 * `PATCH '/api/issues/:id/assign'`. - assigns an issue to yourself
 (***Note:*** _You can  not assign an issue to yourself if the issue is already assigned to someone else)_.
 * `PATCH '/api/issues/:id/set_state'`. with params key: `state_event`.
@@ -51,12 +51,12 @@ You can not unassign  an issue with one of these states as well)_.
 
 ***NOTE:*** _For both above requests you need to have the manager access._
 
-####The end point to `Show` an issue is:
+The end point to `Show` an issue is:
  `GET '/api/issues/:id'`
 you'll get an issue as json. 
 _(This request is available for any registered user)._ 
 
-####The end point to get a list of issues is: 
+The end point to get a list of issues is: 
 `GET '/api/issues'`
 _(a manager can see all issues, a regular user can see issues created by themselves)_
 Both a manager and a regular user can filter issues by state passing state as params.

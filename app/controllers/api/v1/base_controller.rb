@@ -15,7 +15,7 @@ module Api::V1
     def user_not_authorized(exception)
       policy_name = exception.policy.class.to_s.underscore
       message = "#{policy_name}/#{exception.query}"
-      render json: {error: 'Action not allowed', error_description: message}, status: :unauthorized
+      render json: {error: I18n.t('pandit.default'), error_description: message}, status: :unauthorized
     end
   end
 end

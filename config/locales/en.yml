@@ -3,7 +3,7 @@ en:
     forbidden_event: "- Event is invalid"
   pundit:
      default: 'You cannot perform this action.'
-     post_policy:
+     issue_policy:
        update?: 'You have to be a regular user to update issues!'
        create?: 'You have to be a regular user to  create issues!'
        destroy?: 'You have to be a regular user to destroy issues!'

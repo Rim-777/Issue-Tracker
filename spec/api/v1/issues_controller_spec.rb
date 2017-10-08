@@ -1,8 +1,7 @@
 require 'rails_helper'
 
-describe 'Issues API'  do
+describe 'Issues API' do
   let!(:user) {create(:user)}
-
   describe 'GET :index' do
     let!(:regular_user_issue_list) {create_list(:issue, 2, user: user)}
     let(:request) {get '/api/issues', params: {}, headers: headers, xhr: true}
@@ -11,22 +10,21 @@ describe 'Issues API'  do
       context 'regular user' do
         let_valid_headers
 
+        before {request}
+
         it_behaves_like 'Success'
 
         it 'returns json with an array' do
-          request
           expect(response.body).to have_json_size(2).at_path('/')
         end
 
         it 'returns an array of issues' do
-          request
           regular_user_issue_list.each do |issue|
             expect(response.body).to include_json(issue.to_json).at_path('/')
           end
         end
 
         it 'returns json according to the schema' do
-          request
           expect(response).to match_response_schema('un_assigned_issues')
         end
       end
@@ -44,22 +42,22 @@ describe 'Issues API'  do
           }
         end
 
-        before {manager.add_role(:manager)}
+        before do
+          manager.add_role(:manager)
+          request
+        end
 
         it 'returns json with an array' do
-          request
           expect(response.body).to have_json_size(4).at_path('/')
         end
 
         it 'returns an array of all issues' do
-          request
           manager_issue_list.concat(regular_user_issue_list).each do |issue|
             expect(response.body).to include_json(issue.to_json).at_path('/')
           end
         end
 
         it 'returns json according to the schema' do
-          request
           expect(response).to match_response_schema('assigned_issues')
         end
       end
@@ -104,19 +102,19 @@ describe 'Issues API'  do
   end
 
   describe 'GET :show' do
+    let!(:issue) {create(:issue, user: user)}
     let(:request) {get "/api/issues/#{issue.id}", params: {}, headers: headers, xhr: true}
     context 'authenticated' do
       let_valid_headers
 
+      before {request}
       it_behaves_like 'Success'
 
       it 'returns an issue as json' do
-        request
         expect(response.body).to be_json_eql(issue.to_json).at_path('/')
       end
 
       it 'returns json according to the schema' do
-        request
         expect(response.body).to match_response_schema('un_assigned_issue')
       end
     end
@@ -152,7 +150,7 @@ describe 'Issues API'  do
     end
 
     context 'unauthenticated' do
-      it_behaves_like  'UnAuthenticatedAndUnUpdated'
+      it_behaves_like 'UnAuthenticatedAndUnUpdated'
     end
   end
 
@@ -188,6 +186,7 @@ describe 'Issues API'  do
     before {user.add_role :manager}
     context 'authenticated' do
       let_valid_headers
+      before {request}
 
       context 'the issue is not assigned' do
         let!(:issue) {create(:issue, user: user)}
@@ -195,13 +194,11 @@ describe 'Issues API'  do
         it_behaves_like 'Success'
 
         it 'returns an issue as json' do
-          request
           issue.reload
           expect(response.body).to be_json_eql(issue.to_json).at_path('/')
         end
 
         it 'returns json according to the schema' do
-          request
           issue.reload
           expect(response.body).to match_response_schema('assigned_issue')
         end
@@ -213,13 +210,11 @@ describe 'Issues API'  do
         it_behaves_like 'Success'
 
         it 'returns an issue as json' do
-          request
           issue.reload
           expect(response.body).to be_json_eql(issue.to_json).at_path('/')
         end
 
         it 'returns json according to the schema' do
-          request
           expect(response.body).to match_response_schema('un_assigned_issue')
         end
       end
@@ -242,16 +237,16 @@ describe 'Issues API'  do
       %w(open_issue stop_issue return_issue close_issue).each do |event|
         let(:params) {{state_event: event}}
 
+        before {request}
+
         it_behaves_like 'Success'
 
         it 'returns an issue as json' do
-          request
           issue.reload
           expect(response.body).to be_json_eql(issue.to_json).at_path('/')
         end
 
         it 'returns json according to the schema' do
-          request
           expect(response.body).to match_response_schema('assigned_issue')
         end
       end

@@ -6,16 +6,13 @@ module Api::V1
     respond_to :json
 
     protected
-
     def authenticate_user!
       return if current_user
       head :unauthorized
     end
 
-    def user_not_authorized(exception)
-      policy_name = exception.policy.class.to_s.underscore
-      message = "#{policy_name}/#{exception.query}"
-      render json: {error: I18n.t('pandit.default'), error_description: message}, status: :unauthorized
+    def user_not_authorized(e)
+      render json: {error: "#{e.policy.class} #{e.query}" , message: "#{e.message}" }, status: :unauthorized
     end
   end
 end

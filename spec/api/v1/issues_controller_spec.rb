@@ -104,7 +104,6 @@ describe 'Issues API'  do
   end
 
   describe 'GET :show' do
-    let!(:issue) {create(:issue, user: user)}
     let(:request) {get "/api/issues/#{issue.id}", params: {}, headers: headers, xhr: true}
     context 'authenticated' do
       let_valid_headers
@@ -153,29 +152,7 @@ describe 'Issues API'  do
     end
 
     context 'unauthenticated' do
-      context 'wrong authentication_token' do
-        let_wrong_token_headers
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it "doesn't change an issues attributes" do
-          request
-          expect(issue.title).to eq 'The old Issue Title'
-          expect(issue.description).to eq 'The old Issue Description'
-        end
-      end
-
-      context 'wrong email' do
-        let_wrong_email_headers
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it "doesn't change an issues attributes" do
-          request
-          expect(issue.title).to eq 'The old Issue Title'
-          expect(issue.description).to eq 'The old Issue Description'
-        end
-      end
+      it_behaves_like  'UnAuthenticatedAndUnUpdated'
     end
   end
 
@@ -249,28 +226,7 @@ describe 'Issues API'  do
     end
 
     context 'unauthenticated' do
-      let!(:issue) {create(:issue, user: user)}
-      context 'wrong authentication_token' do
-        let_wrong_token_headers
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it "doesn't assign manager to issue" do
-          request
-          expect(issue.assignee).to be nil
-        end
-      end
-
-      context 'wrong email' do
-        let_wrong_email_headers
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it "doesn't assign manager to issue" do
-          request
-          expect(issue.assignee).to be nil
-        end
-      end
+      it_behaves_like 'UnAuthenticatedAndUnAssigned'
     end
   end
 
@@ -302,31 +258,7 @@ describe 'Issues API'  do
     end
 
     context 'unauthenticated' do
-      let(:params) {{state_event: 'open_issue'}}
-      let(:request) {patch "/api/issues/#{issue.id}/set_state", params: params, headers: headers, xhr: true}
-      context 'wrong authentication_token' do
-        let_wrong_token_headers
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it "doesn't change the state of the issue" do
-          request
-          issue.reload
-          expect(issue.pending?).to be true
-        end
-      end
-
-      context 'wrong email' do
-        let_wrong_email_headers
-
-        it_behaves_like 'UnAuthenticatedUser'
-
-        it "doesn't change the state of the issue" do
-          request
-          issue.reload
-          expect(issue.pending?).to be true
-        end
-      end
+      it_behaves_like 'UnAuthenticatedAndUnStated'
     end
   end
 end

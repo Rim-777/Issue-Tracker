@@ -22,8 +22,7 @@ class Issue < ApplicationRecord
   end
 
   def self.fetch_collection_by(**options)
-    state = options[:state]
-    user = options[:user]
+    user,  state = options[:user], options[:state]
     if state
       user.has_role?(:manager) ? Issue.where(state: state) : Issue.where(state: state, user: user)
     else

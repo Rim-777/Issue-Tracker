@@ -8,7 +8,6 @@ RSpec.describe Issue, type: :model do
   it {should belong_to(:user)}
   it {should belong_to(:assignee).class_name('User').with_foreign_key('assignee_id')}
 
-
   context 'if in_progress?' do
     before {allow(subject).to receive(:in_progress?).and_return(true)}
     it {should validate_presence_of(:assignee_id)}
@@ -61,7 +60,6 @@ RSpec.describe Issue, type: :model do
     let!(:pending_issue) {create(:issue, user: user, assignee: create(:user))}
     let!(:resolved_issue) {create(:issue, user: user, assignee: create(:user), state: 'resolved')}
     let!(:progressing_issue) {create(:issue, user: user, assignee: create(:user))}
-
 
     context 'in_progress' do
       it 'sets state in_progress' do

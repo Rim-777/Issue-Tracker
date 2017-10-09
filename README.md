@@ -43,10 +43,10 @@ The POST and PATCH above requests returns issue as json.
 End points to assign an issue to yourself and change issue states:
 * `PATCH '/api/issues/:id/assign'`. - assigns an issue to yourself
 (***Note:*** _You can  not assign an issue to yourself if the issue is already assigned to someone else)_.
-* `PATCH '/api/issues/:id/set_state'`. with params key: `state_event`.
+* `PATCH '/api/issues/:id/set_state'`  with params key: `state_event`.
 Allowed state events are: `open_issue` - sets the state  as `in_progress`, `close_issue` - sets the state  as `resolved`, `stop_issue` - sets the state  as `pending`.
  By default any issue has the state `pending` 
-(***Note:*** _you can't set states `in_progress` and `close_issue` if the issue doesn't have assignee. 
+(***Note:*** _you can't set states `in_progress` and `resolved` if the issue doesn't have assignee. 
 You can't unassign an issue with one of these states as well)_.
 
 ***NOTE:*** _For both above requests you need to have the manager access._
